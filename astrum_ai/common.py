@@ -156,3 +156,45 @@ def safe_float(value: Optional[str]) -> float:
         return float(value)
     except ValueError:
         return np.nan
+
+
+def compute_confidence(probability: float, candidate_threshold: float, confirmed_threshold: float) -> float:
+    """Map a raw model probability to a confidence score (0-1) based on thresholds."""
+
+    if not np.isfinite(probability):
+        return 0.0
+
+    if confirmed_threshold <= candidate_threshold:
+        raise ValueError("confirmed_threshold must be greater than candidate_threshold")
+
+    candidate = float(candidate_threshold)
+    confirmed = float(confirmed_threshold)
+    prob = float(np.clip(probability, 0.0, 1.0))
+
+    midpoint = candidate + (confirmed - candidate) / 2.0
+
+    if prob < candidate:
+        if candidate <= 0.0:
+            return 1.0
+        confidence = 1.0 - (prob / candidate)
+    elif prob < midpoint:
+        span = midpoint - candidate
+        if span <= 0.0:
+            confidence = 0.0
+        else:
+            ratio = (prob - candidate) / span
+            confidence = 4.0 * ratio * (1.0 - ratio)
+    elif prob < confirmed:
+        span = confirmed - midpoint
+        if span <= 0.0:
+            confidence = 0.0
+        else:
+            ratio = (prob - midpoint) / span
+            confidence = 4.0 * ratio * (1.0 - ratio)
+    else:
+        if confirmed >= 1.0:
+            return 1.0
+        span = 1.0 - confirmed
+        confidence = (prob - confirmed) / span if span > 0.0 else 1.0
+
+    return float(np.clip(confidence, 0.0, 1.0))
