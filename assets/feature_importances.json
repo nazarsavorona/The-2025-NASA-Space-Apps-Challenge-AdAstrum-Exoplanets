@@ -1,0 +1,17 @@
+{
+  "Orbital Period (days)": 27884.833504080772,
+  "Transit Duration (hours)": 11461.031258970499,
+  "Transit Depth (ppm)": 20514.496178925037,
+  "Impact Parameter": 9013.564484089613,
+  "Eccentricity": 872.1251285076141,
+  "Inclination (degrees)": 8752.685040086508,
+  "Planet Radius (Earth radii)": 50285.66988945007,
+  "Planet Equilibrium Temperature (K)": 25769.203072845936,
+  "Insolation Flux (Earth flux)": 6548.60926130414,
+  "Stellar Effective Temperature (K)": 8623.679917544127,
+  "Stellar Surface Gravity (log10(cm/s^2))": 7475.145740032196,
+  "Stellar Radius (solar radii)": 6567.19534599781,
+  "Stellar Mass (solar masses)": 4982.842602550983,
+  "Stellar Metallicity ([Fe/H])": 13078.731902450323,
+  "Dataset Type Indicator": 3818.9925240278244
+}

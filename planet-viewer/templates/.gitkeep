@@ -1,0 +1,5 @@
+# This file ensures the templates directory is tracked by git
+# Place generated planet textures here:
+# - earth-texture.png
+# - mars-texture.png
+# - jupiter-texture.png

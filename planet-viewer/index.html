@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planet Viewer - NASA Space Apps</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            background: #000;
+            color: #fff;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Main viewer area */
+        #planet-container {
+            flex: 1;
+            position: relative;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 350px;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar h1 {
+            font-size: 24px;
+            color: #4a9eff;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-section {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-section h2 {
+            font-size: 16px;
+            color: #88c0ff;
+            margin-bottom: 10px;
+        }
+
+        /* Form elements */
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #4a9eff;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: rgba(74, 158, 255, 0.2);
+            border: 1px solid #4a9eff;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background: rgba(74, 158, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        button.active {
+            background: #4a9eff;
+        }
+
+        /* Info panel */
+        #planet-info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #planet-info h2 {
+            color: #4a9eff;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        #planet-info p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        #planet-info strong {
+            color: #88c0ff;
+        }
+
+        /* Controls overlay */
+        .controls-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 300px;
+        }
+
+        .controls-overlay h3 {
+            font-size: 16px;
+            color: #4a9eff;
+            margin-bottom: 8px;
+        }
+
+        .controls-overlay p {
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 5px;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 380px;
+            padding: 15px 25px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            transition: opacity 0.5s;
+        }
+
+        .notification-info {
+            background: rgba(74, 158, 255, 0.9);
+            border: 1px solid #4a9eff;
+        }
+
+        .notification-success {
+            background: rgba(76, 175, 80, 0.9);
+            border: 1px solid #4CAF50;
+        }
+
+        .notification-error {
+            background: rgba(244, 67, 54, 0.9);
+            border: 1px solid #F44336;
+        }
+
+        .notification.fade-out {
+            opacity: 0;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            color: #4a9eff;
+            margin-bottom: 20px;
+        }
+
+        .model-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .model-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .model-item:hover {
+            background: rgba(74, 158, 255, 0.2);
+            border-color: #4a9eff;
+        }
+
+        .model-item h3 {
+            color: #88c0ff;
+            margin-bottom: 5px;
+            font-size: 16px;
+        }
+
+        .model-item p {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .close-modal {
+            width: 100%;
+        }
+
+        /* Loading indicator */
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: #4a9eff;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(74, 158, 255, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(74, 158, 255, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div id="planet-container">
+            <div class="controls-overlay">
+                <h3>Controls</h3>
+                <p>• Left click + drag to rotate</p>
+                <p>• Right click + drag to pan</p>
+                <p>• Scroll to zoom in/out</p>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <h1>🪐 Planet Viewer</h1>
+            
+            <div class="sidebar-section">
+                <h2>Select Planet</h2>
+                <select id="planet-select">
+                    <option value="">Loading...</option>
+                </select>
+            </div>
+
+            <div class="sidebar-section">
+                <h2>Load Custom Model</h2>
+                <input 
+                    type="text" 
+                    id="model-url-input" 
+                    placeholder="Enter model URL (.glb, .gltf, .obj)"
+                />
+                <button id="load-model-btn">Load Model</button>
+            </div>
+
+            <div class="sidebar-section">
+                <h2>Backend Models</h2>
+                <button id="load-from-backend">📁 Browse Backend Models</button>
+                <p style="font-size: 12px; color: #888; margin-top: 5px;">
+                    Load 3D models generated by DreamFusion
+                </p>
+            </div>
+
+            <div class="sidebar-section">
+                <h2>Controls</h2>
+                <button id="toggle-rotation" class="active">⏸ Pause Rotation</button>
+                <button id="reset-camera">🔄 Reset Camera</button>
+                <button id="take-screenshot">📷 Take Screenshot</button>
+            </div>
+
+            <div id="planet-info">
+                <h2>Planet Information</h2>
+                <p>Select a planet to view details</p>
+            </div>
+
+            <div class="sidebar-section">
+                <h2>About</h2>
+                <p style="font-size: 13px; line-height: 1.5;">
+                    This is a modular planet viewer built with Three.js. 
+                    It can display planets with colors, textures, or import 
+                    3D models from the DreamFusion backend.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>

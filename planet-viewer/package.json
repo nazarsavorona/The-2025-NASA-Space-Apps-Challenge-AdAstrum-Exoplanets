@@ -1,0 +1,31 @@
+{
+  "name": "planet-viewer",
+  "version": "1.0.0",
+  "description": "Modular 3D Planet Visualization Component with DreamFusion Support",
+  "main": "src/components/PlanetViewer.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:full": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "threejs",
+    "3d",
+    "planet",
+    "visualization",
+    "space",
+    "astronomy",
+    "dreamfusion",
+    "nasa"
+  ],
+  "author": "NASA Space Apps Challenge",
+  "license": "MIT",
+  "dependencies": {
+    "three": "^0.157.0"
+  },
+  "devDependencies": {
+    "vite": "^4.5.0"
+  }
+}

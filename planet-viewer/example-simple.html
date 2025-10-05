@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planet Viewer - Simple Example</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #000;
+            color: #fff;
+        }
+        #planet-container {
+            width: 100vw;
+            height: 100vh;
+        }
+        .info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 300px;
+        }
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+            color: #4a9eff;
+        }
+        p {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="planet-container"></div>
+    <div class="info">
+        <h1>Simple Planet Viewer Example</h1>
+        <p>This demonstrates how to use the PlanetViewer component standalone.</p>
+    </div>
+
+    <script type="module">
+        import { PlanetViewer } from './src/components/PlanetViewer.js';
+
+        // Example 1: Simple colored planet
+        const viewer = new PlanetViewer({
+            container: document.getElementById('planet-container'),
+            planetData: {
+                name: 'Earth',
+                radius: 6,
+                color: 0x4169e1
+            },
+            options: {
+                autoRotate: true,
+                showStars: true,
+                enableControls: true,
+                backgroundColor: 0x000000,
+                cameraDistance: 15
+            }
+        });
+
+        // Example 2: Load a 3D model (uncomment to test)
+        /*
+        const viewer = new PlanetViewer({
+            container: document.getElementById('planet-container'),
+            planetData: {
+                name: 'Custom Planet',
+                radius: 5,
+                modelUrl: 'http://localhost:8000/models/planet.glb'
+            }
+        });
+        */
+
+        // Example 3: Planet with rings (uncomment to test)
+        /*
+        const viewer = new PlanetViewer({
+            container: document.getElementById('planet-container'),
+            planetData: {
+                name: 'Saturn',
+                radius: 21,
+                color: 0xfad5a5,
+                hasRings: true,
+                ringColor: 0xd4a373
+            }
+        });
+        */
+
+        console.log('Planet Viewer initialized!');
+        console.log('Scene:', viewer.getScene());
+        console.log('Camera:', viewer.getCamera());
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+services:
+  # Development API Service with hot reload
+  api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile.dev
+    container_name: adastrum-api-dev
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MODEL_DIR=/app/models
+      - LOG_LEVEL=DEBUG
+      - RELOAD=true
+    volumes:
+      - ./backend:/app:delegated
+      - ./assets/models:/app/models:ro
+      - ./backend/dynamic:/app/dynamic
+    restart: unless-stopped
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    networks:
+      - adastrum-network
+    labels:
+      - "com.adastrum.service=api"
+      - "com.adastrum.environment=development"
+
+  # Development Frontend Service with hot reload
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: adastrum-frontend-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend:/app:delegated
+      - /app/node_modules
+      - /app/.next
+    restart: unless-stopped
+    depends_on:
+      - api
+    networks:
+      - adastrum-network
+    labels:
+      - "com.adastrum.service=frontend"
+      - "com.adastrum.environment=development"
+
+networks:
+  adastrum-network:
+    driver: bridge
+    name: adastrum-network-dev
