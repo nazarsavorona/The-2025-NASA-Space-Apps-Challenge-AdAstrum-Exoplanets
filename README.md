@@ -48,7 +48,7 @@ python inference.py kepler path/to/kepler_sample.csv \
   --confirmed-threshold 0.7 \
   --output scored.csv
 ```
-The script appends `predicted_class` (0 = false positive, 1 = candidate, 2 = confirmed) and `predicted_confidence` probability columns. When `--output` is omitted, results are saved alongside the source file as `<name>_scored.csv`.
+The script appends `predicted_class` (0 = false positive, 1 = candidate, 2 = confirmed) and `predicted_confidence` columns. Confidence is derived from the model probability using the supplied thresholds—scores dip around the candidate threshold, the midpoint between the thresholds, and the confirmed threshold, and climb toward the extremes (near 0 and 1) and within the interior bands. When `--output` is omitted, results are saved alongside the source file as `<name>_scored.csv`.
 
 ### Backend API 
 To run the FastAPI backend locally:

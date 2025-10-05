@@ -9,6 +9,8 @@ import numpy as np
 import pandas as pd
 from joblib import load
 
+from astrum_ai.common import compute_confidence
+
 # Define feature columns expected by the model
 FEATURE_COLUMNS = [
     "orbital_period",
@@ -249,16 +251,20 @@ class ModelService:
 
         probabilities = self.model.predict_proba(features_prepared)[:, 1]
 
-        # Assign classes
+        # Assign classes and derive confidence scores
         classes = [
             self._assign_class(p, candidate_threshold, confirmed_threshold)
+            for p in probabilities
+        ]
+        confidences = [
+            compute_confidence(p, candidate_threshold, confirmed_threshold)
             for p in probabilities
         ]
 
         # Create output dataframe
         result_df = df.copy()
         result_df["predicted_class"] = classes
-        result_df["predicted_confidence"] = probabilities
+        result_df["predicted_confidence"] = confidences
         result_df["id"] = range(1, len(classes) + 1)
         result_df = result_df.replace([np.nan, np.inf, -np.inf], None)
 

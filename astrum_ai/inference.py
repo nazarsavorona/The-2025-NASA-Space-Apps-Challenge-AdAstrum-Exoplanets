@@ -14,6 +14,7 @@ from .common import (
     MISSION_SPECS,
     PREPROCESSOR_FILENAME,
     MissionSpec,
+    compute_confidence,
     iter_csv_records,
     safe_float,
 )
@@ -111,10 +112,13 @@ def run_inference(
     probabilities = model.predict_proba(features)[:, 1]
 
     classes = [assign_class(p, candidate_threshold, confirmed_threshold) for p in probabilities]
+    confidences = [
+        compute_confidence(p, candidate_threshold, confirmed_threshold) for p in probabilities
+    ]
 
     output_frame = raw_frame.copy()
     output_frame["predicted_class"] = classes
-    output_frame["predicted_confidence"] = probabilities
+    output_frame["predicted_confidence"] = confidences
 
     output_path = output or scored_filename(csv_path)
     output_frame.to_csv(output_path, index=False)

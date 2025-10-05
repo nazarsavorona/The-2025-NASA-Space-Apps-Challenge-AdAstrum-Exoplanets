@@ -122,6 +122,8 @@ Make predictions on exoplanet data provided as JSON.
 - `1` - Candidate
 - `2` - Confirmed
 
+`predicted_confidence` is a 0-1 confidence score derived from the model probability using the candidate and confirmed thresholds. Scores dip near each threshold (candidate and confirmed) and their midpoint, reflecting uncertainty around decision boundaries, and increase toward the extremes and in the interior bands between those dips.
+
 ---
 
 ### 3. AI Prediction Endpoint (CSV)
